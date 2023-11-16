@@ -1,4 +1,4 @@
-# SMS Verifier AWS
+# Event Registration through SMS via AWS
 
 > Demo of serverless application to send instant verification SMS based on form response submission
 
