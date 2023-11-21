@@ -1,0 +1,14 @@
+{
+  "resourceName": "formtable",
+  "tableName": "formtable",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "roll",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}
