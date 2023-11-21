@@ -1,6 +1,6 @@
 <a href="https://nextf0rm.vercel.app/">
-  <img alt="Next.js 13 and Express.JS" src="./assets/banner.svg">
-  <h1 align="center">Next.js Forms</h1>
+  <img alt="Next.js 13 and Express.JS" src="./assets/banner.png">
+  <h1 align="center">Registration Validator SMS</h1>
 </a>
 
 <p align="center">
