@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/register": {
+      "name": "/register",
+      "lambdaFunction": "formfunction",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
