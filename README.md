@@ -118,6 +118,24 @@ This project is created by [MLSA KIIT](https://mlsakiit.com) team members:
   
 **AWS Infrastructure**
 - [ ] Actual implementation in production
-- [ ] Email functionality implementation alongwith SMS
+- [ ] Email functionality along with SMS
 - [ ] SNS Topic so that other notifications can be published to the same numbers
+
+## Usage
+
+<p align="center"> 
+  <img src="https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/f29507912629613b2ca8ac423484c0b7d6409029/assets/form.png" />
+   <br><b>Registration Form template</b>
+</p>
+<br>
+<p align="center"> 
+  <img src="https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/f29507912629613b2ca8ac423484c0b7d6409029/assets/registrations.png" />
+   <br><b>DynamoDB Table with valid entries</b>
+</p>
+<br>
+<p align="center"> 
+  <img src="https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/f29507912629613b2ca8ac423484c0b7d6409029/assets/ss.png" />
+   <br><b>SMS Example for a valid Registration</b>
+</p>
+
 ----
