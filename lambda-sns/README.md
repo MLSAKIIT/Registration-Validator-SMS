@@ -19,16 +19,16 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
      ```bash
       aws dynamodb create-table \
       --table-name Users \
-      --attribute-definitions AttributeName=Name,AttributeType=S AttributeName=phoneNumber,AttributeType=S \
-      --key-schema AttributeName=Name,KeyType=HASH  AttributeName=phoneNumber,KeyType=RANGE \
+      --attribute-definitions AttributeName=id,AttributeType=S AttributeName=roll,AttributeType=S \
+      --key-schema AttributeName=id,KeyType=HASH  AttributeName=roll,KeyType=RANGE \
       --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
       --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
      ```
-     This creates a DynamoDB table called Users with `Name` as Partition Key & `phoneNumber` as Sort Key accepting String Datatypes. This also enables DynamoDB Streams.
+     This creates a DynamoDB table called Users with `id` as Partition Key & `roll` as Sort Key accepting String datatypes. This also enables DynamoDB Streams.
      
   2. Go to AWS DynamoDB from the AWS Console Homepage and search DynamoDB. Select `Tables` in the left pane of the DynamoDB page to access your table.
      
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/67b935ff-eca3-4e74-92ae-17820260e635)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/DynamodbTable.png)
 
 </details>
 <details>
@@ -36,23 +36,23 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
 
   ### AWS Lambda Configuration
   
-  1. Go to Services > Lambda > Functions > `Create function`
+  1. Go to Services > Lambda > Functions > `Create function`.
   2. Provide a name for the function and select the following configuration
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/cc4b09ef-4808-4e5f-8d7d-0e18b931dbea)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/FunctionCreation.png)
 
-  3. Under the Code Source window copy the contents of the lambda_function.py from the repository files.
+  3. Under the Code Source window copy the contents of the `app.py` from the repository files.
   4. Go to Configuration > Permissions > Execution Role. Click the role name assigned to the Lambda function which will redirect to the **IAM console**.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/78a0ce93-dcce-4aca-9f6b-add713b26931)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/ExecutionRole.png)
    
-  5. Go to Permission Policies > Add permissions > Attach Policies
+  5. Go to Permission Policies > Add permissions > Attach Policies.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/85c69bcd-b863-4a1d-b118-34861115eee7)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/AttachPolicies.png)
 
   6. Search and Select `Amazon SNS Full Access` under Other permissions Policies and click Add permissions.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/ecb3b6f7-13c6-490b-9148-5a2eec857762)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/SNSpermission.png)
 
 </details>
 <details>
@@ -60,18 +60,15 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
 
   ### Creating the EventBridge Pipeline
   
-  1. Go to Services > Amazon EventBridge > Pipes > `Create Pipe`
-  2. In the below window, name your pipeline. Under Source, select Source and click on DynamoDB Stream.
-     
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/379516a2-0770-45b6-8918-052b53f06547)
-     
-  3. Under DynamoDB steam, select the DynamoDB database from the last step.
+  1. Go to Services > Amazon EventBridge > Pipes > `Create Pipe`.
+  2. In the below window, name the pipeline. Under Source, select Source and click on DynamoDB Streams.     
+  3. Under DynamoDB Stream, select the DynamoDB database from [Step 1](#step-1-dynamodb-and-data-streams).
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/05ffa7b3-86cf-41ad-a1be-061261c336bd)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/EBSource.png)
 
   4. Click on Filtering. From the sample events, select Sample event 1 for DynamoDB Stream.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/fb0748c4-54ba-406f-a76a-cdec31246f7c)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/SampleEvents.png)
 
   5. In the `Event pattern`, paste the following pattern.
 
@@ -79,7 +76,7 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
      {
        "dynamodb": {
          "NewImage": {
-           "phoneNumber": {
+           "phone": {
              "S": [{
                "prefix": "+91"
              }]
@@ -88,23 +85,11 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
        }
      }
      ```
-     The EventBridge Pipeline will trigger Lambda function only if new records from DynamoDB have a prefix <kbd>+91</kbd> in the `phoneNumber` column. This filters user records having the country code [+91] for valid Indian phone numbers which will be used for sending the SMS.
+     The EventBridge Pipeline will trigger Lambda function only if new records from DynamoDB have a prefix <kbd>+91</kbd> in the `phone` column. This filters user records having the country code [+91] for valid Indian phone numbers which will be used for sending the SMS.
 
-  6. Under Target, select *AWS Lambda* for Target Service. Select the Lambda function created in [Step 2](#step-2-aws-lambda-handler-function) under Function. Click `Next`.
+  6. Under Target, select *AWS Lambda* for Target Service. Select the Lambda function created in [Step 2](#step-2-aws-lambda-handler-function) under Function. Click `Create Pipe` below.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/f5eb2a4d-4d6f-4ce2-b31a-d6a7be844d31)
-
-  7. In your Pipeline window go to Settings > Permissions > Execution Role ID.
-
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/d7928ebc-5d0d-4323-adcb-17d0f39e09fb)
-
-  8. Go to Permission Policies > Add permissions > Attach Policies
-
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/02d4c113-195b-466d-b357-e7520f231561)
-
-  9. Search and Select `Amazon Lambda Full Access` under Other permissions Policies and click Add permissions.
-
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/8a84043a-9d71-4a34-8e7e-cfe0d58c88e0)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/TargetPipeline.png)
 
 </details>
 <details>
@@ -112,23 +97,16 @@ Initial commit from [@SourasishBasu](https://github.com/Sourasishbasu).
 
   ### Configuring AWS SNS
   
-  1. Go to Services > Simple Notification Service > Text Messaging(SMS) > Sandbox destination phone numbers > `Add phone number`
+  1. Go to Services > Simple Notification Service > Text Messaging(SMS) > Sandbox destination phone numbers > `Add phone number`.
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/4e0d15a7-ac69-4b0b-a57b-457ea7bacda3)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/SNSsandbox.png)
 
   2. Add a phone number that may be used for testing purposes for verification by Amazon. Follow the steps until the phone number appears under the sandbox showing Status:
       |:white_check_mark:|Verified|
       |------------------|:-------|
 
-     ![image](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/883a3b27-1a05-4a57-af60-32402cd4983f)
+     ![image](https://github.com/MLSAKIIT/Registration-Validator-SMS/blob/e2453e8c85ac79fe6e796400f854157c2efc70aa/assets/NumberVerified.png)
 </details>
-
-> [!IMPORTANT]  
-> Failing to configure the **IAM Roles** properly might cause the functions & services to not work properly.
-
-### Usage
-
-![Screenshot 2023-11-20 223916](https://github.com/SourasishBasu/SMS-Verifier-AWS/assets/89185962/af297c73-58a9-4e59-b350-9b1e656f5c41)
 
 ## Resources
 
